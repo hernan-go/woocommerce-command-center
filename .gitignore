@@ -1,0 +1,29 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+
+# Dependencies / build folders
+node_modules/
+vendor/
+
+# WordPress environment files
+wp-config.php
+.htaccess
+
+# Sensitive files
+.env
+*.sql
+*.zip
+*.tar.gz
