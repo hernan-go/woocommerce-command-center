@@ -1,0 +1,274 @@
+.lccc-dashboard {
+  min-height: calc(100vh - 32px);
+  margin: 0 0 0 -20px;
+  padding: 40px;
+  background: linear-gradient(135deg, #101006 0%, #2b2c2e 100%);
+  color: #ffffff;
+  font-family: "Poppins", sans-serif;
+}
+
+.lccc-header {
+  margin-bottom: 24px;
+}
+
+.lccc-title {
+  color: #ffffff;
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+
+.lccc-subtitle {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 13px;
+  margin: 0;
+}
+
+.lccc-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.lccc-card {
+  background: #363735;
+  border: 1px solid rgba(149, 251, 253, 0.16);
+  border-radius: 16px;
+  padding: 18px 20px;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.22);
+}
+
+.lccc-card-label {
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  margin: 0 0 12px;
+}
+
+.lccc-card-number {
+  color: #95fbfd;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1;
+  margin: 0 0 10px;
+}
+
+.lccc-card-text {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 12px;
+  margin: 0;
+}
+
+.lccc-icon {
+  color: #3d48e3;
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.lccc-table-section {
+  margin-top: 28px;
+}
+
+.lccc-section-header {
+  margin-bottom: 14px;
+}
+
+.lccc-section-title {
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+
+.lccc-section-subtitle {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 13px;
+  margin: 0;
+}
+
+.lccc-table-wrap {
+  background: #363735;
+  border: 1px solid rgba(149, 251, 253, 0.16);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+}
+
+.lccc-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.lccc-table th,
+.lccc-table td {
+  padding: 5px 10px;
+  text-align: left;
+  vertical-align: middle;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 12px;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.lccc-table th {
+  color: #ffffff;
+  background: #336699;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.lccc-table th:first-child {
+  border-top-left-radius: 12px;
+}
+
+.lccc-table th:last-child {
+  border-top-right-radius: 12px;
+}
+
+.lccc-table tbody tr:nth-child(odd) {
+  background: rgba(149, 251, 253, 0.26);
+}
+
+.lccc-table tbody tr:nth-child(even) {
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.lccc-table tbody tr:hover {
+  background: rgba(149, 251, 253, 0.36);
+}
+
+.lccc-table th:nth-child(1),
+.lccc-table td:nth-child(1) {
+  width: 8%;
+}
+
+.lccc-table th:nth-child(2),
+.lccc-table td:nth-child(2) {
+  width: 8%;
+}
+
+.lccc-table th:nth-child(3),
+.lccc-table td:nth-child(3) {
+  width: 12%;
+}
+
+.lccc-table th:nth-child(4),
+.lccc-table td:nth-child(4) {
+  width: 8%;
+}
+
+.lccc-table th:nth-child(5),
+.lccc-table td:nth-child(5) {
+  width: 8%;
+}
+
+.lccc-table th:nth-child(6),
+.lccc-table td:nth-child(6) {
+  width: 8%;
+  text-align: center;
+}
+
+.lccc-table th:nth-child(7),
+.lccc-table td:nth-child(7) {
+  width: 5%;
+  text-align: center;
+}
+
+.lccc-table th:nth-child(8),
+.lccc-table td:nth-child(8) {
+  width: 5%;
+  text-align: center;
+}
+
+.lccc-table td:nth-child(3),
+.lccc-table td:nth-child(4),
+.lccc-table td:nth-child(5) {
+  word-break: break-word;
+}
+
+.lccc-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 74px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(149, 251, 253, 0.14);
+  border: 1px solid rgba(149, 251, 253, 0.32);
+  color: #95fbfd;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.lccc-whatsapp-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(149, 251, 253, 0.12);
+  border: 1px solid rgba(149, 251, 253, 0.28);
+  text-decoration: none;
+  transition:
+    transform 0.18s ease,
+    background 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.lccc-whatsapp-button:hover,
+.lccc-whatsapp-button:focus {
+  background: rgba(149, 251, 253, 0.22);
+  border-color: rgba(149, 251, 253, 0.58);
+  transform: translateY(-1px);
+}
+
+.lccc-whatsapp-icon {
+  width: 15px;
+  height: 15px;
+  display: block;
+}
+
+.lccc-muted {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 12px;
+}
+
+.lccc-dashboard .lccc-table thead th {
+  background-color: #336699 !important;
+  color: #ffffff !important;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.lccc-dashboard .lccc-table thead th:nth-child(6),
+.lccc-dashboard .lccc-table thead th:nth-child(7),
+.lccc-dashboard .lccc-table thead th:nth-child(8) {
+  text-align: center;
+}
+
+@media (max-width: 960px) {
+  .lccc-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lccc-dashboard {
+    min-height: calc(100vh - 32px);
+    margin: 0 0 0 -20px;
+    padding: 26px 32px;
+    background: linear-gradient(135deg, #101006 0%, #2b2c2e 100%);
+    color: #ffffff;
+    font-family: "Poppins", sans-serif;
+  }
+}
