@@ -1,14 +1,14 @@
-# Lúmina Course Command Center
+# WooCommerce Command Center
 
-Custom WordPress/WooCommerce admin dashboard built for Lúmina Académica to centralize course operations, enrollment tracking, monthly revenue and student follow-up actions.
+Custom WordPress/WooCommerce admin dashboard for centralizing order tracking, monthly revenue, customer follow-up actions and operational activity.
 
 ## Preview
 
-![Lúmina Course Command Center dashboard preview](assets/screenshot/dashboard-preview.png)
+![WooCommerce Command Center dashboard preview](assets/screenshot/dashboard-preview.png)
 
 ## Overview
 
-Lúmina Course Command Center is a custom WordPress plugin that extends WooCommerce with a focused internal dashboard for an online education platform.
+WooCommerce Command Center is a custom WordPress plugin that extends WooCommerce with a focused internal dashboard for store operations, order tracking, revenue visibility and customer follow-up.
 
 Instead of checking orders, students, products and follow-up actions across different WooCommerce screens, the plugin centralizes the most relevant operational data in one admin view.
 

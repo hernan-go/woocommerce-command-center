@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: WooCommerce Command Center
- * Description: Custom admin dashboard for managing WooCommerce course enrollments and student follow-up workflows.
+ * Description: Custom admin dashboard for managing WooCommerce orders, revenue and customer follow-up workflows.
  * Version: 0.1.0
  * Author: Hernán Luis Gobulin
  */
@@ -107,7 +107,7 @@ function lccc_get_dashboard_stats() {
 }
 
 /**
- * Get the latest WooCommerce orders used as recent course enrollments.
+ * Get the latest WooCommerce orders used in the recent orders table.
  */
 function lccc_get_recent_enrollments() {
     if (!function_exists('wc_get_orders')) {
@@ -205,22 +205,24 @@ function lccc_format_phone_for_whatsapp($phone) {
 }
 
 /**
- * Build a prefilled WhatsApp URL for student follow-up.
+ * Build a prefilled WhatsApp URL for customer follow-up.
  */
 function lccc_build_whatsapp_url($phone, $student_name, $courses_text) {
     $whatsapp_phone = lccc_format_phone_for_whatsapp($phone);
 
     if (empty($whatsapp_phone)) {
-        return '';
-    }
+    return '';
+}
 
-    $message = sprintf(
-        'Hola %s, te escribimos desde Lúmina Académica por tu inscripción al curso: %s.',
-        $student_name,
-        $courses_text
-    );
+$site_name = get_bloginfo('name');
 
-    return 'https://wa.me/' . $whatsapp_phone . '?text=' . rawurlencode($message);
+$message = sprintf(
+    'Hola %s, nos comunicamos desde %s.',
+    $customer_name,
+    $site_name
+);
+
+return 'https://wa.me/' . $whatsapp_phone . '?text=' . rawurlencode($message);
 }
 
 /**
