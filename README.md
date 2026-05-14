@@ -10,19 +10,19 @@ Custom WordPress/WooCommerce admin dashboard for centralizing order tracking, mo
 
 WooCommerce Command Center is a custom WordPress plugin that extends WooCommerce with a focused internal dashboard for store operations, order tracking, revenue visibility and customer follow-up.
 
-Instead of checking orders, students, products and follow-up actions across different WooCommerce screens, the plugin centralizes the most relevant operational data in one admin view.
+Instead of checking orders, customers, products and follow-up actions across different WooCommerce screens, the plugin centralizes the most relevant operational data in one admin view.
 
 ## Features
 
 - Custom WordPress admin dashboard
-- Active WooCommerce product/course count
-- Confirmed enrollment count
+- Active WooCommerce product/product count
+- Confirmed order count
 - Monthly revenue calculation
 - Pending follow-up count
-- Recent enrollments table
+- Recent order table
 - Custom checkout meta field support for DNI
-- Clean course names for variable products
-- WhatsApp follow-up action per student
+- Clean item names for variable products
+- WhatsApp follow-up action per customer
 - Fallback behavior when WooCommerce is inactive
 - Custom admin UI with separated template and assets
 
@@ -70,13 +70,13 @@ The plugin uses WooCommerce data through native WooCommerce/WordPress APIs:
 
 The admin dashboard displays:
 
-- Total active courses/products
-- Confirmed enrollments
+- Total active products
+- Confirmed orders
 - Monthly revenue
 - Pending follow-ups
-- Latest 10 confirmed or processing course orders
-- Student contact data from WooCommerce orders
-- Course purchased
+- Latest 10 confirmed or processing WooCommerce orders
+- Customer contact data from WooCommerce orders
+- Purchased item
 - Order status
 - WhatsApp follow-up action
 
@@ -84,7 +84,7 @@ The admin dashboard displays:
 
 This plugin was built for a real WordPress/WooCommerce education platform and adapted to its operational workflow.
 
-Sensitive student/order data is not included in this repository. Screenshots used for portfolio purposes should hide personal information such as names, emails, phone numbers and DNI.
+Sensitive customer/order data is not included in this repository. Screenshots used for portfolio purposes should hide personal information such as names, emails, phone numbers and DNI.
 
 ## Status
 

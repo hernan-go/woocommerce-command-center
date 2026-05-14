@@ -66,25 +66,25 @@ if (!defined('ABSPATH')) {
                 </thead>
 
                 <tbody>
-                    <?php if (!empty($recent_enrollments)) : ?>
-                        <?php foreach ($recent_enrollments as $enrollment) : ?>
+                    <?php if (!empty($recent_orders)) : ?>
+                        <?php foreach ($recent_orders as $order) : ?>
                             <tr>
-                                <td><?php echo esc_html($enrollment['student_name']); ?></td>
-                                <td><?php echo esc_html($enrollment['student_dni']); ?></td>
-                                <td><?php echo esc_html($enrollment['student_email']); ?></td>
-                                <td><?php echo esc_html($enrollment['student_phone']); ?></td>
-                                <td><?php echo esc_html($enrollment['courses']); ?></td>
-                                <td><?php echo esc_html($enrollment['date']); ?></td>
+                                <td><?php echo esc_html($order['customer_name']); ?></td>
+                                <td><?php echo esc_html($order['customer_dni']); ?></td>
+                                <td><?php echo esc_html($order['customer_email']); ?></td>
+                                <td><?php echo esc_html($order['customer_phone']); ?></td>
+                                <td><?php echo esc_html($order['items']); ?></td>
+                                <td><?php echo esc_html($order['date']); ?></td>
                                 <td>
                                     <span class="lccc-status">
-                                        <?php echo esc_html($enrollment['status']); ?>
+                                        <?php echo esc_html($order['status']); ?>
                                     </span>
                                 </td>
                                 <td>
-                                    <?php if (!empty($enrollment['whatsapp_url'])) : ?>
+                                    <?php if (!empty($order['whatsapp_url'])) : ?>
                                         <a
                                             class="lccc-whatsapp-button"
-                                            href="<?php echo esc_url($enrollment['whatsapp_url']); ?>"
+                                            href="<?php echo esc_url($order['whatsapp_url']); ?>"
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             title="Open WhatsApp"

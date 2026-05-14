@@ -109,7 +109,7 @@ function lccc_get_dashboard_stats() {
 /**
  * Get the latest WooCommerce orders used in the recent orders table.
  */
-function lccc_get_recent_enrollments() {
+function lccc_get_recent_orders() {
     if (!function_exists('wc_get_orders')) {
         return array();
     }
@@ -121,37 +121,37 @@ function lccc_get_recent_enrollments() {
         'order' => 'DESC',
     ));
 
-    $recent_enrollments = array();
+    $recent_orders = array();
 
     foreach ($orders as $order) {
-        $student_name = trim($order->get_billing_first_name() . ' ' . $order->get_billing_last_name());
-        $student_dni = $order->get_meta('user_identity_number');
-        $student_email = $order->get_billing_email();
-        $student_phone = $order->get_billing_phone();
+        $customer_name = trim($order->get_billing_first_name() . ' ' . $order->get_billing_last_name());
+        $customer_dni = $order->get_meta('user_identity_number');
+        $customer_email = $order->get_billing_email();
+        $customer_phone = $order->get_billing_phone();
         $order_status = $order->get_status();
         $date_created = $order->get_date_created();
 
-        $course_names = lccc_get_order_course_names($order);
-        $courses_text = implode(', ', $course_names);
+        $item_names = lccc_get_order_item_names($order);
+        $items_text = implode(', ', $item_names);
 
         $whatsapp_url = lccc_build_whatsapp_url(
-            $student_phone,
-            $student_name,
+            $customer_phone,
+            $customer_name,
         );
 
-        $recent_enrollments[] = array(
-            'student_name' => $student_name,
-            'student_dni' => $student_dni,
-            'student_email' => $student_email,
-            'student_phone' => $student_phone,
-            'courses' => $courses_text,
+        $recent_orders[] = array(
+            'customer_name' => $customer_name,
+            'customer_dni' => $customer_dni,
+            'customer_email' => $customer_email,
+            'customer_phone' => $customer_phone,
+            'items' => $items_text,
             'whatsapp_url' => $whatsapp_url,
             'date' => $date_created ? $date_created->date_i18n('d/m/Y') : '',
             'status' => $order_status,
         );
     }
 
-    return $recent_enrollments;
+    return $recent_orders;
 }
 
 /**
@@ -160,14 +160,14 @@ function lccc_get_recent_enrollments() {
  * If the purchased item is a variation, the parent product name is used
  * to avoid showing pricing/variation labels in the dashboard.
  */
-function lccc_get_order_course_names($order) {
-    $course_names = array();
+function lccc_get_order_item_names($order) {
+    $item_names = array();
 
     foreach ($order->get_items() as $item) {
         $product = $item->get_product();
 
         if (!$product) {
-            $course_names[] = $item->get_name();
+            $item_names[] = $item->get_name();
             continue;
         }
 
@@ -175,15 +175,15 @@ function lccc_get_order_course_names($order) {
             $parent_product = wc_get_product($product->get_parent_id());
 
             if ($parent_product) {
-                $course_names[] = $parent_product->get_name();
+                $item_names[] = $parent_product->get_name();
                 continue;
             }
         }
 
-        $course_names[] = $product->get_name();
+        $item_names[] = $product->get_name();
     }
 
-    return array_unique($course_names);
+    return array_unique($item_names);
 }
 
 /**
@@ -208,19 +208,19 @@ function lccc_format_phone_for_whatsapp($phone) {
  */
 function lccc_build_whatsapp_url($phone, $customer_name) {
 $whatsapp_phone = lccc_format_phone_for_whatsapp($phone);
-if (empty($whatsapp_phone)) {
-    return '';
-}
+    if (empty($whatsapp_phone)) {
+      return '';
+    }
 
-$site_name = get_bloginfo('name');
+    $site_name = get_bloginfo('name');
 
-$message = sprintf(
-    'Hola %s, nos comunicamos desde %s.',
-    $customer_name,
-    $site_name
-);
+    $message = sprintf(
+      'Hola %s, nos comunicamos desde %s.',
+      $customer_name,
+      $site_name
+    );
 
-return 'https://wa.me/' . $whatsapp_phone . '?text=' . rawurlencode($message);
+    return 'https://wa.me/' . $whatsapp_phone . '?text=' . rawurlencode($message);
 }
 
 /**
@@ -239,7 +239,7 @@ function lccc_format_revenue($amount) {
  */
 function lccc_render_admin_page() {
     $stats = lccc_get_dashboard_stats();
-    $recent_enrollments = lccc_get_recent_enrollments();
+    $recent_orders = lccc_get_recent_orders();
 
     $active_products = $stats['active_products'];
     $total_orders = $stats['total_orders'];
