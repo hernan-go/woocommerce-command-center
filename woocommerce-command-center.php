@@ -62,13 +62,13 @@ function lccc_register_admin_page() {
 function lccc_get_dashboard_stats() {
     $product_counts = wp_count_posts('product');
 
-    $active_courses = 0;
-    $total_enrollments = 0;
+    $active_products = 0;
+    $total_orders = 0;
     $monthly_revenue = 0;
     $pending_followups = 0;
 
     if ($product_counts && isset($product_counts->publish)) {
-        $active_courses = (int) $product_counts->publish;
+        $active_products = (int) $product_counts->publish;
     }
 
     if (function_exists('wc_get_orders')) {
@@ -94,13 +94,13 @@ function lccc_get_dashboard_stats() {
             $monthly_revenue += (float) $order->get_total();
         }
 
-        $total_enrollments = count($completed_orders);
+        $total_orders = count($completed_orders);
         $pending_followups = count($pending_orders);
     }
 
     return array(
-        'active_courses' => $active_courses,
-        'total_enrollments' => $total_enrollments,
+        'active_products' => $active_products,
+        'total_orders' => $total_orders,
         'monthly_revenue' => $monthly_revenue,
         'pending_followups' => $pending_followups,
     );
@@ -243,8 +243,8 @@ function lccc_render_admin_page() {
     $stats = lccc_get_dashboard_stats();
     $recent_enrollments = lccc_get_recent_enrollments();
 
-    $active_courses = $stats['active_courses'];
-    $total_enrollments = $stats['total_enrollments'];
+    $active_products = $stats['active_products'];
+    $total_orders = $stats['total_orders'];
     $monthly_revenue = $stats['monthly_revenue'];
     $pending_followups = $stats['pending_followups'];
 

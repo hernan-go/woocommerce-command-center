@@ -16,14 +16,14 @@ if (!defined('ABSPATH')) {
         <article class="lccc-card">
             <div class="lccc-icon">◆</div>
             <h2 class="lccc-card-label">Products</h2>
-            <p class="lccc-card-number"><?php echo esc_html($active_courses); ?></p>
+            <p class="lccc-card-number"><?php echo esc_html($active_products); ?></p>
             <p class="lccc-card-text">Active products tracked.</p>
         </article>
 
         <article class="lccc-card">
             <div class="lccc-icon">◆</div>
             <h2 class="lccc-card-label">Orders</h2>
-            <p class="lccc-card-number"><?php echo esc_html($total_enrollments); ?></p>
+            <p class="lccc-card-number"><?php echo esc_html($total_orders); ?></p>
             <p class="lccc-card-text">Total confirmed orders.</p>
         </article>
 
