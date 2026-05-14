@@ -39,7 +39,7 @@ Instead of checking orders, students, products and follow-up actions across diff
 ## Plugin Structure
 
 ```text
-lumina-course-command-center/
+woocommerce-command-center/
 ├── woocommerce-command-center.php
 ├── README.md
 ├── .gitignore
