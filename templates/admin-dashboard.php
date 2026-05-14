@@ -6,25 +6,25 @@ if (!defined('ABSPATH')) {
 
 <div class="lccc-dashboard">
     <header class="lccc-header">
-        <h1 class="lccc-title">Lúmina Académica | Course Command Center</h1>
+        <h1 class="lccc-title">WooCommerce Command Center</h1>
         <p class="lccc-subtitle">
-            Custom operational dashboard for courses, enrollments and student follow-up.
+            Custom operational dashboard for WooCommerce orders, revenue and customer follow-up.
         </p>
     </header>
 
     <section class="lccc-grid">
         <article class="lccc-card">
             <div class="lccc-icon">◆</div>
-            <h2 class="lccc-card-label">Courses</h2>
+            <h2 class="lccc-card-label">Products</h2>
             <p class="lccc-card-number"><?php echo esc_html($active_courses); ?></p>
-            <p class="lccc-card-text">Active courses tracked.</p>
+            <p class="lccc-card-text">Active products tracked.</p>
         </article>
 
         <article class="lccc-card">
             <div class="lccc-icon">◆</div>
-            <h2 class="lccc-card-label">Enrollments</h2>
+            <h2 class="lccc-card-label">Orders</h2>
             <p class="lccc-card-number"><?php echo esc_html($total_enrollments); ?></p>
-            <p class="lccc-card-text">Total student enrollments.</p>
+            <p class="lccc-card-text">Total confirmed orders.</p>
         </article>
 
         <article class="lccc-card">
@@ -40,25 +40,25 @@ if (!defined('ABSPATH')) {
             <div class="lccc-icon">◆</div>
             <h2 class="lccc-card-label">Pending Follow-ups</h2>
             <p class="lccc-card-number"><?php echo esc_html($pending_followups); ?></p>
-            <p class="lccc-card-text">Students pending contact.</p>
+            <p class="lccc-card-text">Customers pending contact.</p>
         </article>
     </section>
 
     <section class="lccc-table-section">
         <div class="lccc-section-header">
-            <h2 class="lccc-section-title">Recent Enrollments</h2>
-            <p class="lccc-section-subtitle">Latest 10 confirmed or processing course orders.</p>
+            <h2 class="lccc-section-title">Recent Orders</h2>
+            <p class="lccc-section-subtitle">Latest 10 confirmed or processing WooCommerce orders.</p>
         </div>
 
         <div class="lccc-table-wrap">
             <table class="lccc-table">
                 <thead>
                     <tr>
-                        <th>Student</th>
+                        <th>Customer</th>
                         <th>DNI</th>
                         <th>Email</th>
                         <th>Phone</th>
-                        <th>Course</th>
+                        <th>Product</th>
                         <th>Date</th>
                         <th>Status</th>
                         <th>Call</th>
@@ -105,7 +105,7 @@ if (!defined('ABSPATH')) {
                         <?php endforeach; ?>
                     <?php else : ?>
                         <tr>
-                            <td colspan="8">No recent enrollments found.</td>
+                            <td colspan="8">No recent orders found.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>

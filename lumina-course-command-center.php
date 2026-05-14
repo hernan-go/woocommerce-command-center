@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Lúmina Course Command Center
+ * Plugin Name: WooCommerce Command Center
  * Description: Custom admin dashboard for managing WooCommerce course enrollments and student follow-up workflows.
  * Version: 0.1.0
  * Author: Hernán Luis Gobulin
@@ -15,12 +15,12 @@ define('LCCC_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('LCCC_PLUGIN_URL', plugin_dir_url(__FILE__));
 
 /**
- * Register admin assets only for the Course Command Center page.
+ * Register admin assets only for the WooCommerce Command Center page.
  */
 add_action('admin_enqueue_scripts', 'lccc_enqueue_admin_assets');
 
 function lccc_enqueue_admin_assets($hook_suffix) {
-    if ($hook_suffix !== 'toplevel_page_lumina-course-command-center') {
+    if ($hook_suffix !== 'toplevel_page_woocommerce-command-center') {
         return;
     }
 
@@ -46,14 +46,14 @@ add_action('admin_menu', 'lccc_register_admin_page');
 
 function lccc_register_admin_page() {
     add_menu_page(
-        'Course Command Center',
-        'Course Center',
-        'manage_options',
-        'lumina-course-command-center',
-        'lccc_render_admin_page',
-        'dashicons-welcome-learn-more',
-        56
-    );
+    'WooCommerce Command Center',
+    'WooCommerce Center',
+    'manage_options',
+    'woocommerce-command-center',
+    'lccc_render_admin_page',
+    'dashicons-cart',
+    56
+);
 }
 
 /**
