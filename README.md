@@ -40,7 +40,7 @@ Instead of checking orders, students, products and follow-up actions across diff
 
 ```text
 lumina-course-command-center/
-├── lumina-course-command-center.php
+├── woocommerce-command-center.php
 ├── README.md
 ├── .gitignore
 ├── templates/
