@@ -137,7 +137,6 @@ function lccc_get_recent_enrollments() {
         $whatsapp_url = lccc_build_whatsapp_url(
             $student_phone,
             $student_name,
-            $courses_text
         );
 
         $recent_enrollments[] = array(
@@ -207,10 +206,9 @@ function lccc_format_phone_for_whatsapp($phone) {
 /**
  * Build a prefilled WhatsApp URL for customer follow-up.
  */
-function lccc_build_whatsapp_url($phone, $student_name, $courses_text) {
-    $whatsapp_phone = lccc_format_phone_for_whatsapp($phone);
-
-    if (empty($whatsapp_phone)) {
+function lccc_build_whatsapp_url($phone, $customer_name) {
+$whatsapp_phone = lccc_format_phone_for_whatsapp($phone);
+if (empty($whatsapp_phone)) {
     return '';
 }
 
