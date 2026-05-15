@@ -26,37 +26,60 @@
 
 .lccc-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 18px;
+  align-items: stretch;
 }
 
 .lccc-card {
+  min-width: 0;
   background: #363735;
   border: 1px solid rgba(149, 251, 253, 0.16);
   border-radius: 16px;
-  padding: 18px 20px;
+  padding: 18px 18px;
   box-shadow: 0 14px 32px rgba(0, 0, 0, 0.22);
 }
 
 .lccc-card-label {
   color: #ffffff;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
+  line-height: 1.35;
   margin: 0 0 12px;
 }
 
 .lccc-card-number {
   color: #95fbfd;
-  font-size: 30px;
+  font-size: clamp(26px, 1.9vw, 34px);
   font-weight: 700;
   line-height: 1;
   margin: 0 0 10px;
+  word-break: break-word;
 }
 
 .lccc-card-text {
   color: rgba(255, 255, 255, 0.68);
   font-size: 12px;
+  line-height: 1.4;
   margin: 0;
+}
+
+@media (max-width: 1500px) {
+  .lccc-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1100px) {
+  .lccc-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 782px) {
+  .lccc-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .lccc-icon {
@@ -259,10 +282,6 @@
 }
 
 @media (max-width: 960px) {
-  .lccc-grid {
-    grid-template-columns: 1fr;
-  }
-
   .lccc-dashboard {
     min-height: calc(100vh - 32px);
     margin: 0 0 0 -20px;
