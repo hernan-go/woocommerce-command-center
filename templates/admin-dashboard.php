@@ -29,19 +29,29 @@ if (!defined('ABSPATH')) {
 
         <article class="lccc-card">
             <div class="lccc-icon">◆</div>
-            <h2 class="lccc-card-label">Monthly Revenue</h2>
-            <p class="lccc-card-number">
-                <?php echo wp_kses_post(lccc_format_revenue($monthly_revenue)); ?>
-            </p>
-            <p class="lccc-card-text">Confirmed revenue this month.</p>
-        </article>
-
-        <article class="lccc-card">
-            <div class="lccc-icon">◆</div>
             <h2 class="lccc-card-label">Pending Follow-ups</h2>
             <p class="lccc-card-number"><?php echo esc_html($pending_followups); ?></p>
             <p class="lccc-card-text">Customers pending contact.</p>
         </article>
+
+        <article class="lccc-card">
+            <div class="lccc-icon">◆</div>
+            <h2 class="lccc-card-label">Monthly Revenue ARS</h2>
+            <p class="lccc-card-number">
+                <?php echo wp_kses_post(lccc_format_revenue($monthly_revenue_ars)); ?>
+            </p>
+            <p class="lccc-card-text">Confirmed ARS revenue this month.</p>
+        </article>
+
+        <article class="lccc-card">
+            <div class="lccc-icon">◆</div>
+            <h2 class="lccc-card-label">Monthly Revenue USD</h2>
+            <p class="lccc-card-number">
+                <?php echo wp_kses_post(lccc_format_revenue($monthly_revenue_usd)); ?>
+            </p>
+            <p class="lccc-card-text">Confirmed USD revenue this month.</p>
+        </article>
+
     </section>
 
     <section class="lccc-table-section">

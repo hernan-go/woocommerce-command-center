@@ -64,7 +64,7 @@ function lccc_get_dashboard_stats() {
 
     $active_products = 0;
     $total_orders = 0;
-    $monthly_revenue = 0;
+    $monthly_revenue_by_currency = array();
     $pending_followups = 0;
 
     if ($product_counts && isset($product_counts->publish)) {
@@ -91,7 +91,17 @@ function lccc_get_dashboard_stats() {
         ));
 
         foreach ($monthly_orders as $order) {
-            $monthly_revenue += (float) $order->get_total();
+            $currency = $order->get_currency();
+
+            if (empty($currency)) {
+                $currency = get_woocommerce_currency();
+            }
+
+            if (!isset($monthly_revenue_by_currency[$currency])) {
+                $monthly_revenue_by_currency[$currency] = 0;
+            }
+
+            $monthly_revenue_by_currency[$currency] += (float) $order->get_total();
         }
 
         $total_orders = count($completed_orders);
@@ -101,7 +111,9 @@ function lccc_get_dashboard_stats() {
     return array(
         'active_products' => $active_products,
         'total_orders' => $total_orders,
-        'monthly_revenue' => $monthly_revenue,
+        'monthly_revenue_by_currency' => $monthly_revenue_by_currency,
+        'monthly_revenue_ars' => isset($monthly_revenue_by_currency['ARS']) ? $monthly_revenue_by_currency['ARS'] : 0,
+        'monthly_revenue_usd' => isset($monthly_revenue_by_currency['USD']) ? $monthly_revenue_by_currency['USD'] : 0,
         'pending_followups' => $pending_followups,
     );
 }
@@ -243,7 +255,8 @@ function lccc_render_admin_page() {
 
     $active_products = $stats['active_products'];
     $total_orders = $stats['total_orders'];
-    $monthly_revenue = $stats['monthly_revenue'];
+    $monthly_revenue_ars = $stats['monthly_revenue_ars'];
+    $monthly_revenue_usd = $stats['monthly_revenue_usd'];
     $pending_followups = $stats['pending_followups'];
 
     require LCCC_PLUGIN_DIR . 'templates/admin-dashboard.php';
