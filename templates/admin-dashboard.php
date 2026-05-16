@@ -54,6 +54,79 @@ if (!defined('ABSPATH')) {
 
     </section>
 
+    <section class="lccc-operations-section">
+    <div class="lccc-section-header">
+        <h2 class="lccc-section-title">Google Tools</h2>
+        <p class="lccc-section-subtitle">Operational signals and quick access tools for daily management.</p>
+    </div>
+
+    <div class="lccc-operations-grid">
+        <article class="lccc-tool-card lccc-tool-card--calendar">
+            <div class="lccc-tool-card-header">
+                <h3 class="lccc-tool-title">Calendar</h3>
+                <a
+                    class="lccc-tool-link"
+                    href="https://calendar.google.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Go to Calendar
+                </a>
+            </div>
+
+            <p class="lccc-tool-label">Next Event</p>
+            <p class="lccc-tool-value">No event connected yet.</p>
+            <p class="lccc-tool-meta">Google Calendar integration pending.</p>
+        </article>
+
+        <article class="lccc-tool-card lccc-tool-card--gmail">
+            <div class="lccc-tool-card-header">
+                <h3 class="lccc-tool-title">Gmail Signals</h3>
+                <a
+                    class="lccc-tool-link"
+                    href="https://mail.google.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Go to Inbox
+                </a>
+            </div>
+
+            <ul class="lccc-signal-list">
+                <li>Unread emails: <strong>—</strong></li>
+                <li>Pending replies: <strong>—</strong></li>
+                <li>Updates: <strong>—</strong></li>
+            </ul>
+        </article>
+
+        <article class="lccc-tool-card lccc-tool-card--tasks">
+            <div class="lccc-tool-card-header">
+                <h3 class="lccc-tool-title">Operational Tasks</h3>
+                <span class="lccc-tool-badge">Internal</span>
+            </div>
+
+            <div class="lccc-task-preview">
+                <span>Follow-up</span>
+                <span>Priority</span>
+                <span>Status</span>
+            </div>
+
+            <p class="lccc-tool-meta">Task module pending.</p>
+        </article>
+
+        <article class="lccc-tool-card lccc-tool-card--trends">
+            <div class="lccc-tool-card-header">
+                <h3 class="lccc-tool-title">Trends & News</h3>
+                <span class="lccc-tool-badge">Soon</span>
+            </div>
+
+            <p class="lccc-tool-label">Market Signals</p>
+            <p class="lccc-tool-value">No feed connected yet.</p>
+            <p class="lccc-tool-meta">RSS or curated source pending.</p>
+        </article>
+    </div>
+</section>
+
     <section class="lccc-table-section">
         <div class="lccc-section-header">
             <h2 class="lccc-section-title">Recent Orders</h2>
