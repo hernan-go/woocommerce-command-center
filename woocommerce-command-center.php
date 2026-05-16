@@ -268,6 +268,26 @@ function lccc_get_gmail_signals_widget_data() {
 }
 
 /**
+ * Get Operational Tasks widget data.
+ *
+ * This first version keeps tasks as a non-persistent placeholder.
+ * Future versions can replace this with stored WordPress options,
+ * a custom database table, or an internal task post type.
+ */
+function lccc_get_operational_tasks_widget_data() {
+    return array(
+        'items' => array(
+            array(
+                'label' => 'Follow-up',
+                'priority' => 'Priority',
+                'status' => 'Status',
+            ),
+        ),
+        'meta' => 'Task module pending.',
+    );
+}
+
+/**
  * Format revenue safely, even if WooCommerce is inactive.
  */
 function lccc_format_revenue($amount) {
@@ -286,6 +306,7 @@ function lccc_render_admin_page() {
     $recent_orders = lccc_get_recent_orders();
     $calendar_widget = lccc_get_calendar_widget_data();
     $gmail_signals_widget = lccc_get_gmail_signals_widget_data();
+    $operational_tasks_widget = lccc_get_operational_tasks_widget_data();
 
     $active_products = $stats['active_products'];
     $total_orders = $stats['total_orders'];

@@ -124,13 +124,19 @@ if (!defined('ABSPATH')) {
                 <span class="lccc-tool-badge">Internal</span>
             </div>
 
-            <div class="lccc-task-preview">
-                <span>Follow-up</span>
-                <span>Priority</span>
-                <span>Status</span>
-            </div>
+          <?php if (!empty($operational_tasks_widget['items'])) : ?>
+            <?php foreach ($operational_tasks_widget['items'] as $task) : ?>
+                <div class="lccc-task-preview">
+                    <span><?php echo esc_html($task['label']); ?></span>
+                    <span><?php echo esc_html($task['priority']); ?></span>
+                    <span><?php echo esc_html($task['status']); ?></span>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
 
-            <p class="lccc-tool-meta">Task module pending.</p>
+        <p class="lccc-tool-meta">
+            <?php echo esc_html($operational_tasks_widget['meta']); ?>
+        </p>
         </article>
 
         <article class="lccc-tool-card lccc-tool-card--trends">
