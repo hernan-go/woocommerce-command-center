@@ -66,7 +66,7 @@ if (!defined('ABSPATH')) {
                 <h3 class="lccc-tool-title">Calendar</h3>
                 <a
                     class="lccc-tool-link"
-                    href="https://calendar.google.com/"
+                    href="<?php echo esc_url($calendar_widget['url']); ?>"
                     target="_blank"
                     rel="noopener noreferrer"
                 >
@@ -75,8 +75,12 @@ if (!defined('ABSPATH')) {
             </div>
 
             <p class="lccc-tool-label">Next Event</p>
-            <p class="lccc-tool-value">No event connected yet.</p>
-            <p class="lccc-tool-meta">Google Calendar integration pending.</p>
+            <p class="lccc-tool-value">
+                <?php echo esc_html($calendar_widget['title']); ?>
+            </p>
+            <p class="lccc-tool-meta">
+                <?php echo esc_html($calendar_widget['meta']); ?>
+            </p>
         </article>
 
         <article class="lccc-tool-card lccc-tool-card--gmail">
