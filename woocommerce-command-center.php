@@ -252,6 +252,22 @@ function lccc_get_calendar_widget_data() {
 }
 
 /**
+ * Get Gmail Signals widget data.
+ *
+ * This first version keeps the widget safe and non-invasive:
+ * no OAuth, no external requests, and no email content access.
+ * Future versions can replace this placeholder with Gmail API signals.
+ */
+function lccc_get_gmail_signals_widget_data() {
+    return array(
+        'unread_emails' => null,
+        'pending_replies' => null,
+        'updates' => null,
+        'url' => 'https://mail.google.com/',
+    );
+}
+
+/**
  * Format revenue safely, even if WooCommerce is inactive.
  */
 function lccc_format_revenue($amount) {
@@ -269,6 +285,7 @@ function lccc_render_admin_page() {
     $stats = lccc_get_dashboard_stats();
     $recent_orders = lccc_get_recent_orders();
     $calendar_widget = lccc_get_calendar_widget_data();
+    $gmail_signals_widget = lccc_get_gmail_signals_widget_data();
 
     $active_products = $stats['active_products'];
     $total_orders = $stats['total_orders'];

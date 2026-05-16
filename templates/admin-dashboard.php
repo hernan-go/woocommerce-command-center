@@ -88,7 +88,7 @@ if (!defined('ABSPATH')) {
                 <h3 class="lccc-tool-title">Gmail Signals</h3>
                 <a
                     class="lccc-tool-link"
-                    href="https://mail.google.com/"
+                    href="<?php echo esc_url($gmail_signals_widget['url']); ?>"
                     target="_blank"
                     rel="noopener noreferrer"
                 >
@@ -97,10 +97,25 @@ if (!defined('ABSPATH')) {
             </div>
 
             <ul class="lccc-signal-list">
-                <li>Unread emails: <strong>—</strong></li>
-                <li>Pending replies: <strong>—</strong></li>
-                <li>Updates: <strong>—</strong></li>
-            </ul>
+              <li>
+                  Unread emails:
+                  <strong>
+                      <?php echo is_null($gmail_signals_widget['unread_emails']) ? '—' : esc_html($gmail_signals_widget['unread_emails']); ?>
+                  </strong>
+              </li>
+              <li>
+                  Pending replies:
+                  <strong>
+                      <?php echo is_null($gmail_signals_widget['pending_replies']) ? '—' : esc_html($gmail_signals_widget['pending_replies']); ?>
+                  </strong>
+              </li>
+              <li>
+                  Updates:
+                  <strong>
+                      <?php echo is_null($gmail_signals_widget['updates']) ? '—' : esc_html($gmail_signals_widget['updates']); ?>
+                  </strong>
+              </li>
+          </ul>
         </article>
 
         <article class="lccc-tool-card lccc-tool-card--tasks">
