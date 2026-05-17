@@ -470,8 +470,11 @@ function lccc_get_trends_news_widget_data() {
     }
 
     $feed_urls = array(
-        'https://news.google.com/rss/search?q=(yoga%20OR%20mindfulness%20OR%20holistic%20wellness%20OR%20natural%20health%20OR%20integrative%20health%20OR%20psychology%20OR%20mental%20health%20OR%20beauty%20wellness)%20when:14d&hl=es-419&gl=AR&ceid=AR:es-419',
+        'https://www.wellandgood.com/feed/',
+        'https://www.mindbodygreen.com/rss.xml',
         'https://news.google.com/rss/search?q=(terapias%20hol%C3%ADsticas%20OR%20bienestar%20integral%20OR%20yoga%20OR%20meditaci%C3%B3n%20OR%20salud%20natural%20OR%20psicolog%C3%ADa%20OR%20salud%20mental)%20when:14d&hl=es-419&gl=AR&ceid=AR:es-419',
+        'https://news.google.com/rss/search?q=(yoga%20OR%20mindfulness%20OR%20holistic%20wellness%20OR%20natural%20health%20OR%20integrative%20health%20OR%20psychology%20OR%20mental%20health%20OR%20beauty%20wellness)%20when:14d&hl=es-419&gl=AR&ceid=AR:es-419',
+        'https://news.google.com/rss/search?q=(wellness%20OR%20self-care%20OR%20beauty%20trends%20OR%20healthy%20lifestyle%20OR%20emotional%20wellbeing)%20when:14d&hl=es-419&gl=AR&ceid=AR:es-419',
     );
 
     $items = array();
@@ -483,7 +486,7 @@ function lccc_get_trends_news_widget_data() {
             continue;
         }
 
-        $max_items = $feed->get_item_quantity(4);
+        $max_items = $feed->get_item_quantity(8);
         $feed_items = $feed->get_items(0, $max_items);
 
         foreach ($feed_items as $feed_item) {
@@ -497,22 +500,14 @@ function lccc_get_trends_news_widget_data() {
         }
     }
 
-    $image_items = array_values(array_filter($items, function ($item) {
-        return !empty($item['image_url']);
-    }));
-
-    if (!empty($image_items)) {
-        $items = $image_items;
-    }
-
     if (empty($items)) {
-        $items = $fallback_items;
+    $items = $fallback_items;
     }
 
     return array(
         'label' => 'Market Signals',
-        'items' => array_slice($items, 0, 8),
-        'meta' => !empty($image_items) ? 'Latest visual RSS updates.' : 'Latest RSS updates.',
+        'items' => array_slice($items, 0, 15),
+        'meta' => 'Latest RSS updates.',
     );
 }
 /**
