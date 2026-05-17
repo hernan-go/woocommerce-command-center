@@ -140,20 +140,74 @@ if (!defined('ABSPATH')) {
         </article>
 
         <article class="lccc-tool-card lccc-tool-card--trends">
-            <div class="lccc-tool-card-header">
-                <h3 class="lccc-tool-title">Trends & News</h3>
-                <span class="lccc-tool-badge">Soon</span>
-            </div>
+          <div class="lccc-tool-card-header">
+              <h3 class="lccc-tool-title">Trends & News</h3>
+              <span class="lccc-tool-badge">RSS</span>
+          </div>
 
-            <p class="lccc-tool-label">
-                <?php echo esc_html($trends_news_widget['label']); ?>
-            </p>
-            <p class="lccc-tool-value">
-                <?php echo esc_html($trends_news_widget['value']); ?>
-            </p>
-            <p class="lccc-tool-meta">
-                <?php echo esc_html($trends_news_widget['meta']); ?>
-            </p>
+          <p class="lccc-tool-label">
+              <?php echo esc_html($trends_news_widget['label']); ?>
+          </p>
+
+          <?php if (!empty($trends_news_widget['items'])) : ?>
+              <div class="lccc-news-slider" data-lccc-news-slider>
+                  <div class="lccc-news-track">
+                      <?php foreach ($trends_news_widget['items'] as $index => $news_item) : ?>
+                          <article
+                              class="lccc-news-slide <?php echo 0 === $index ? 'is-active' : ''; ?>"
+                              data-lccc-news-slide
+                          >
+                              <a
+                                  class="lccc-news-card-link"
+                                  href="<?php echo esc_url($news_item['url']); ?>"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                              >
+                                  <?php if (!empty($news_item['image_url'])) : ?>
+                                      <img
+                                          class="lccc-news-image"
+                                          src="<?php echo esc_url($news_item['image_url']); ?>"
+                                          alt=""
+                                          loading="lazy"
+                                          decoding="async"
+                                      >
+                                  <?php else : ?>
+                                      <span class="lccc-news-image-placeholder" aria-hidden="true">
+                                          News
+                                      </span>
+                                  <?php endif; ?>
+
+                                  <span class="lccc-news-title">
+                                      <?php echo esc_html($news_item['title']); ?>
+                                  </span>
+                              </a>
+
+                              <div class="lccc-news-meta">
+                          </article>
+                      <?php endforeach; ?>
+                  </div>
+
+                  <div class="lccc-news-controls">
+                      <button type="button" class="lccc-news-button" data-lccc-news-prev aria-label="Previous news">
+                          ‹
+                      </button>
+
+                      <span class="lccc-news-counter">
+                          <span data-lccc-news-current>1</span>/<span><?php echo esc_html(count($trends_news_widget['items'])); ?></span>
+                      </span>
+
+                      <button type="button" class="lccc-news-button" data-lccc-news-next aria-label="Next news">
+                          ›
+                      </button>
+                  </div>
+              </div>
+          <?php else : ?>
+              <p class="lccc-tool-value">No feed connected yet.</p>
+          <?php endif; ?>
+
+          <p class="lccc-tool-meta">
+              <?php echo esc_html($trends_news_widget['meta']); ?>
+          </p>
         </article>
     </div>
 </section>

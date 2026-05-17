@@ -37,6 +37,14 @@ function lccc_enqueue_admin_assets($hook_suffix) {
         array(),
         filemtime(LCCC_PLUGIN_DIR . 'assets/admin.css')
     );
+
+    wp_enqueue_script(
+        'lccc-admin-script',
+        LCCC_PLUGIN_URL . 'assets/admin.js',
+        array(),
+        filemtime(LCCC_PLUGIN_DIR . 'assets/admin.js'),
+        true
+    );
 }
 
 /**
@@ -288,20 +296,225 @@ function lccc_get_operational_tasks_widget_data() {
 }
 
 /**
- * Get Trends & News widget data.
+ * Try to extract an Open Graph / Twitter Card image from a remote article URL.
  *
- * This first version keeps the widget as a lightweight placeholder.
- * Future versions can replace this data source with RSS feeds,
- * curated industry sources, or external trend APIs.
+ * Results are cached to avoid repeated external requests on every dashboard load.
  */
-function lccc_get_trends_news_widget_data() {
-    return array(
-        'label' => 'Market Signals',
-        'value' => 'No feed connected yet.',
-        'meta' => 'RSS or curated source pending.',
+function lccc_extract_remote_page_image_url($url) {
+    if (empty($url)) {
+        return '';
+    }
+
+    $cache_key = 'lccc_news_image_v2_' . md5($url);
+    $cached_image = get_transient($cache_key);
+
+    if (false !== $cached_image) {
+        return $cached_image;
+    }
+
+    $response = wp_safe_remote_get($url, array(
+        'timeout' => 4,
+        'redirection' => 3,
+        'headers' => array(
+            'User-Agent' => 'Mozilla/5.0 WooCommerce Command Center News Bot',
+        ),
+    ));
+
+    if (is_wp_error($response)) {
+        set_transient($cache_key, '', 6 * HOUR_IN_SECONDS);
+        return '';
+    }
+
+    $status_code = wp_remote_retrieve_response_code($response);
+
+    if ($status_code < 200 || $status_code >= 400) {
+        set_transient($cache_key, '', 6 * HOUR_IN_SECONDS);
+        return '';
+    }
+
+    $html = wp_remote_retrieve_body($response);
+
+    if (empty($html)) {
+        set_transient($cache_key, '', 6 * HOUR_IN_SECONDS);
+        return '';
+    }
+
+    $patterns = array(
+        '/<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']/i',
+        '/<meta[^>]+content=["\']([^"\']+)["\'][^>]+property=["\']og:image["\']/i',
+        '/<meta[^>]+property=["\']og:image:secure_url["\'][^>]+content=["\']([^"\']+)["\']/i',
+        '/<meta[^>]+content=["\']([^"\']+)["\'][^>]+property=["\']og:image:secure_url["\']/i',
+        '/<meta[^>]+name=["\']twitter:image["\'][^>]+content=["\']([^"\']+)["\']/i',
+        '/<meta[^>]+content=["\']([^"\']+)["\'][^>]+name=["\']twitter:image["\']/i',
     );
+
+    foreach ($patterns as $pattern) {
+        if (preg_match($pattern, $html, $matches)) {
+            $image_url = html_entity_decode($matches[1], ENT_QUOTES, 'UTF-8');
+            $parsed_url = wp_parse_url($url);
+
+            if (0 === strpos($image_url, '//')) {
+                $scheme = !empty($parsed_url['scheme']) ? $parsed_url['scheme'] : 'https';
+                $image_url = $scheme . ':' . $image_url;
+            }
+
+            if (0 === strpos($image_url, '/') && !empty($parsed_url['scheme']) && !empty($parsed_url['host'])) {
+                $image_url = $parsed_url['scheme'] . '://' . $parsed_url['host'] . $image_url;
+            }
+
+            $image_url = esc_url_raw($image_url);
+            if (false !== strpos($image_url, 'googleusercontent.com') || false !== strpos($image_url, 'gstatic.com')) {
+                set_transient($cache_key, '', 6 * HOUR_IN_SECONDS);
+                return '';
+            }
+    }
+
+    set_transient($cache_key, '', 6 * HOUR_IN_SECONDS);
+
+    return '';
+}
 }
 
+/**
+ * Try to extract a representative image URL from a feed item.
+ *
+ * Supports common RSS patterns:
+ * - media:content / media:thumbnail
+ * - enclosure images
+ * - first image found in description/content HTML
+ * - remote Open Graph / Twitter Card image
+ */
+function lccc_extract_feed_item_image_url($feed_item) {
+    if (!$feed_item) {
+        return '';
+    }
+
+    $media_content = $feed_item->get_item_tags('http://search.yahoo.com/mrss/', 'content');
+
+    if (!empty($media_content[0]['attribs']['']['url'])) {
+        return esc_url_raw($media_content[0]['attribs']['']['url']);
+    }
+
+    $media_thumbnail = $feed_item->get_item_tags('http://search.yahoo.com/mrss/', 'thumbnail');
+
+    if (!empty($media_thumbnail[0]['attribs']['']['url'])) {
+        return esc_url_raw($media_thumbnail[0]['attribs']['']['url']);
+    }
+
+    $enclosure = $feed_item->get_enclosure();
+
+    if ($enclosure) {
+        $enclosure_link = $enclosure->get_link();
+        $enclosure_type = $enclosure->get_type();
+
+        if (!empty($enclosure_link) && !empty($enclosure_type) && 0 === strpos($enclosure_type, 'image/')) {
+            return esc_url_raw($enclosure_link);
+        }
+    }
+
+    $description = $feed_item->get_description();
+
+    if (!empty($description) && preg_match('/<img[^>]+src=["\']([^"\']+)["\']/i', $description, $matches)) {
+        return esc_url_raw($matches[1]);
+    }
+
+    $content = $feed_item->get_content();
+
+    if (!empty($content) && preg_match('/<img[^>]+src=["\']([^"\']+)["\']/i', $content, $matches)) {
+        return esc_url_raw($matches[1]);
+    }
+
+    $remote_image_url = lccc_extract_remote_page_image_url($feed_item->get_permalink());
+
+    if (!empty($remote_image_url)) {
+        return $remote_image_url;
+    }
+
+    return '';
+}
+
+/**
+ * Get Trends & News widget data.
+ *
+ * Uses WordPress native RSS handling with a safe fallback.
+ * Results are lightweight and intended for dashboard-level operational awareness.
+ */
+function lccc_get_trends_news_widget_data() {
+    $fallback_items = array(
+        array(
+            'title' => 'Holistic wellness updates pending.',
+            'source' => 'WooCommerce Command Center',
+            'date' => '',
+            'url' => 'https://news.google.com/',
+            'image_url' => '',
+        ),
+        array(
+            'title' => 'Connect custom RSS sources to show industry-specific updates.',
+            'source' => 'Dashboard Feed',
+            'date' => '',
+            'url' => 'https://news.google.com/',
+            'image_url' => '',
+        ),
+    );
+
+    if (!function_exists('fetch_feed')) {
+        include_once ABSPATH . WPINC . '/feed.php';
+    }
+
+    if (!function_exists('fetch_feed')) {
+        return array(
+            'label' => 'Market Signals',
+            'items' => $fallback_items,
+            'meta' => 'RSS unavailable in this environment.',
+        );
+    }
+
+    $feed_urls = array(
+        'https://news.google.com/rss/search?q=(yoga%20OR%20mindfulness%20OR%20holistic%20wellness%20OR%20natural%20health%20OR%20integrative%20health%20OR%20psychology%20OR%20mental%20health%20OR%20beauty%20wellness)%20when:14d&hl=es-419&gl=AR&ceid=AR:es-419',
+        'https://news.google.com/rss/search?q=(terapias%20hol%C3%ADsticas%20OR%20bienestar%20integral%20OR%20yoga%20OR%20meditaci%C3%B3n%20OR%20salud%20natural%20OR%20psicolog%C3%ADa%20OR%20salud%20mental)%20when:14d&hl=es-419&gl=AR&ceid=AR:es-419',
+    );
+
+    $items = array();
+
+    foreach ($feed_urls as $feed_url) {
+        $feed = fetch_feed($feed_url);
+
+        if (is_wp_error($feed)) {
+            continue;
+        }
+
+        $max_items = $feed->get_item_quantity(4);
+        $feed_items = $feed->get_items(0, $max_items);
+
+        foreach ($feed_items as $feed_item) {
+            $items[] = array(
+                'title' => wp_strip_all_tags($feed_item->get_title()),
+                'source' => wp_strip_all_tags($feed->get_title()),
+                'date' => $feed_item->get_date('d/m/Y'),
+                'url' => esc_url_raw($feed_item->get_permalink()),
+                'image_url' => lccc_extract_feed_item_image_url($feed_item),
+            );
+        }
+    }
+
+    $image_items = array_values(array_filter($items, function ($item) {
+        return !empty($item['image_url']);
+    }));
+
+    if (!empty($image_items)) {
+        $items = $image_items;
+    }
+
+    if (empty($items)) {
+        $items = $fallback_items;
+    }
+
+    return array(
+        'label' => 'Market Signals',
+        'items' => array_slice($items, 0, 8),
+        'meta' => !empty($image_items) ? 'Latest visual RSS updates.' : 'Latest RSS updates.',
+    );
+}
 /**
  * Format revenue safely, even if WooCommerce is inactive.
  */
