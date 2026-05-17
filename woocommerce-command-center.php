@@ -288,6 +288,21 @@ function lccc_get_operational_tasks_widget_data() {
 }
 
 /**
+ * Get Trends & News widget data.
+ *
+ * This first version keeps the widget as a lightweight placeholder.
+ * Future versions can replace this data source with RSS feeds,
+ * curated industry sources, or external trend APIs.
+ */
+function lccc_get_trends_news_widget_data() {
+    return array(
+        'label' => 'Market Signals',
+        'value' => 'No feed connected yet.',
+        'meta' => 'RSS or curated source pending.',
+    );
+}
+
+/**
  * Format revenue safely, even if WooCommerce is inactive.
  */
 function lccc_format_revenue($amount) {
@@ -307,6 +322,7 @@ function lccc_render_admin_page() {
     $calendar_widget = lccc_get_calendar_widget_data();
     $gmail_signals_widget = lccc_get_gmail_signals_widget_data();
     $operational_tasks_widget = lccc_get_operational_tasks_widget_data();
+    $trends_news_widget = lccc_get_trends_news_widget_data();
 
     $active_products = $stats['active_products'];
     $total_orders = $stats['total_orders'];

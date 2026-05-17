@@ -145,9 +145,15 @@ if (!defined('ABSPATH')) {
                 <span class="lccc-tool-badge">Soon</span>
             </div>
 
-            <p class="lccc-tool-label">Market Signals</p>
-            <p class="lccc-tool-value">No feed connected yet.</p>
-            <p class="lccc-tool-meta">RSS or curated source pending.</p>
+            <p class="lccc-tool-label">
+                <?php echo esc_html($trends_news_widget['label']); ?>
+            </p>
+            <p class="lccc-tool-value">
+                <?php echo esc_html($trends_news_widget['value']); ?>
+            </p>
+            <p class="lccc-tool-meta">
+                <?php echo esc_html($trends_news_widget['meta']); ?>
+            </p>
         </article>
     </div>
 </section>
