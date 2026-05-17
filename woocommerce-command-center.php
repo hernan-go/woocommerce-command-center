@@ -51,6 +51,7 @@ function lccc_enqueue_admin_assets($hook_suffix) {
  * Register the plugin admin page.
  */
 add_action('admin_menu', 'lccc_register_admin_page');
+add_action('admin_init', 'lccc_handle_operational_task_actions');
 
 function lccc_register_admin_page() {
     add_menu_page(
@@ -62,6 +63,108 @@ function lccc_register_admin_page() {
     'dashicons-cart',
     56
 );
+}
+
+/**
+ * Handle Operational Tasks form submissions.
+ */
+function lccc_handle_operational_task_actions() {
+    if (!is_admin()) {
+        return;
+    }
+
+    if (empty($_POST['lccc_task_action'])) {
+        return;
+    }
+
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+
+    check_admin_referer('lccc_operational_tasks_action', 'lccc_operational_tasks_nonce');
+
+    $action = sanitize_text_field(wp_unslash($_POST['lccc_task_action']));
+
+    if ('add_task' === $action) {
+        $task_title = isset($_POST['lccc_task_title'])
+            ? sanitize_text_field(wp_unslash($_POST['lccc_task_title']))
+            : '';
+
+        $task_priority = isset($_POST['lccc_task_priority'])
+            ? sanitize_text_field(wp_unslash($_POST['lccc_task_priority']))
+            : 'Medium';
+
+        if (!empty($task_title)) {
+            lccc_add_operational_task($task_title, $task_priority);
+        }
+    }
+
+    if ('complete_task' === $action && !empty($_POST['lccc_task_id'])) {
+        $task_id = sanitize_text_field(wp_unslash($_POST['lccc_task_id']));
+        lccc_complete_operational_task($task_id);
+    }
+
+    wp_safe_redirect(admin_url('admin.php?page=woocommerce-command-center'));
+    exit;
+}
+
+/**
+ * Get stored Operational Tasks.
+ */
+function lccc_get_operational_tasks() {
+    $tasks = get_option('lccc_operational_tasks', array());
+
+    if (!is_array($tasks)) {
+        return array();
+    }
+
+    return $tasks;
+}
+
+/**
+ * Save Operational Tasks.
+ */
+function lccc_save_operational_tasks($tasks) {
+    update_option('lccc_operational_tasks', array_values($tasks), false);
+}
+
+/**
+ * Add a new Operational Task.
+ */
+function lccc_add_operational_task($title, $priority = 'Medium') {
+    $allowed_priorities = array('Low', 'Medium', 'High');
+
+    if (!in_array($priority, $allowed_priorities, true)) {
+        $priority = 'Medium';
+    }
+
+    $tasks = lccc_get_operational_tasks();
+
+    $tasks[] = array(
+        'id' => uniqid('task_', true),
+        'title' => $title,
+        'priority' => $priority,
+        'status' => 'Pending',
+        'created_at' => current_time('mysql'),
+    );
+
+    lccc_save_operational_tasks($tasks);
+}
+
+/**
+ * Mark an Operational Task as completed.
+ */
+function lccc_complete_operational_task($task_id) {
+    $tasks = lccc_get_operational_tasks();
+
+    foreach ($tasks as $index => $task) {
+        if (!empty($task['id']) && $task['id'] === $task_id) {
+            unset($tasks[$index]);
+            break;
+        }
+    }
+
+    lccc_save_operational_tasks($tasks);
 }
 
 /**
@@ -277,21 +380,13 @@ function lccc_get_gmail_signals_widget_data() {
 
 /**
  * Get Operational Tasks widget data.
- *
- * This first version keeps tasks as a non-persistent placeholder.
- * Future versions can replace this with stored WordPress options,
- * a custom database table, or an internal task post type.
  */
 function lccc_get_operational_tasks_widget_data() {
+    $tasks = lccc_get_operational_tasks();
+
     return array(
-        'items' => array(
-            array(
-                'label' => 'Follow-up',
-                'priority' => 'Priority',
-                'status' => 'Status',
-            ),
-        ),
-        'meta' => 'Task module pending.',
+        'items' => array_slice($tasks, 0, 5),
+        'meta' => empty($tasks) ? 'No active operational tasks.' : 'Active operational tasks.',
     );
 }
 

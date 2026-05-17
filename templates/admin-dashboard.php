@@ -84,59 +84,100 @@ if (!defined('ABSPATH')) {
         </article>
 
         <article class="lccc-tool-card lccc-tool-card--gmail">
-            <div class="lccc-tool-card-header">
-                <h3 class="lccc-tool-title">Gmail Signals</h3>
-                <a
-                    class="lccc-tool-link"
-                    href="<?php echo esc_url($gmail_signals_widget['url']); ?>"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Go to Inbox
-                </a>
-            </div>
+                    <div class="lccc-tool-card-header">
+                        <h3 class="lccc-tool-title">Gmail Signals</h3>
+                        <a
+                            class="lccc-tool-link"
+                            href="<?php echo esc_url($gmail_signals_widget['url']); ?>"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Go to Inbox
+                        </a>
+                    </div>
 
-            <ul class="lccc-signal-list">
-              <li>
-                  Unread emails:
-                  <strong>
-                      <?php echo is_null($gmail_signals_widget['unread_emails']) ? '—' : esc_html($gmail_signals_widget['unread_emails']); ?>
-                  </strong>
-              </li>
-              <li>
-                  Pending replies:
-                  <strong>
-                      <?php echo is_null($gmail_signals_widget['pending_replies']) ? '—' : esc_html($gmail_signals_widget['pending_replies']); ?>
-                  </strong>
-              </li>
-              <li>
-                  Updates:
-                  <strong>
-                      <?php echo is_null($gmail_signals_widget['updates']) ? '—' : esc_html($gmail_signals_widget['updates']); ?>
-                  </strong>
-              </li>
-          </ul>
-        </article>
+                    <ul class="lccc-signal-list">
+                      <li>
+                          Unread emails:
+                          <strong>
+                              <?php echo is_null($gmail_signals_widget['unread_emails']) ? '—' : esc_html($gmail_signals_widget['unread_emails']); ?>
+                          </strong>
+                      </li>
+                      <li>
+                          Pending replies:
+                          <strong>
+                              <?php echo is_null($gmail_signals_widget['pending_replies']) ? '—' : esc_html($gmail_signals_widget['pending_replies']); ?>
+                          </strong>
+                      </li>
+                      <li>
+                          Updates:
+                          <strong>
+                              <?php echo is_null($gmail_signals_widget['updates']) ? '—' : esc_html($gmail_signals_widget['updates']); ?>
+                          </strong>
+                      </li>
+                  </ul>
+                </article>
 
-        <article class="lccc-tool-card lccc-tool-card--tasks">
+                <article class="lccc-tool-card lccc-tool-card--tasks">
             <div class="lccc-tool-card-header">
                 <h3 class="lccc-tool-title">Operational Tasks</h3>
                 <span class="lccc-tool-badge">Internal</span>
             </div>
 
-          <?php if (!empty($operational_tasks_widget['items'])) : ?>
-            <?php foreach ($operational_tasks_widget['items'] as $task) : ?>
-                <div class="lccc-task-preview">
-                    <span><?php echo esc_html($task['label']); ?></span>
-                    <span><?php echo esc_html($task['priority']); ?></span>
-                    <span><?php echo esc_html($task['status']); ?></span>
-                </div>
-            <?php endforeach; ?>
-        <?php endif; ?>
+            <form class="lccc-task-form" method="post">
+                <?php wp_nonce_field('lccc_operational_tasks_action', 'lccc_operational_tasks_nonce'); ?>
 
-        <p class="lccc-tool-meta">
-            <?php echo esc_html($operational_tasks_widget['meta']); ?>
-        </p>
+                <input type="hidden" name="lccc_task_action" value="add_task">
+
+                <label class="lccc-task-field">
+                    <span>Task</span>
+                    <input
+                        type="text"
+                        name="lccc_task_title"
+                        placeholder="Add a task..."
+                        required
+                    >
+                </label>
+
+                <div class="lccc-task-form-row">
+                    <label class="lccc-task-field">
+                        <span>Priority</span>
+                        <select name="lccc_task_priority">
+                            <option value="Low">Low</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </label>
+
+                    <button type="submit" class="lccc-task-submit">Add</button>
+                </div>
+            </form>
+
+            <?php if (!empty($operational_tasks_widget['items'])) : ?>
+                <div class="lccc-task-list">
+                    <?php foreach ($operational_tasks_widget['items'] as $task) : ?>
+                        <div class="lccc-task-item">
+                            <div class="lccc-task-main">
+                                <span class="lccc-task-title"><?php echo esc_html($task['title']); ?></span>
+                                <span class="lccc-task-priority lccc-task-priority--<?php echo esc_attr(strtolower($task['priority'])); ?>">
+                                    <?php echo esc_html($task['priority']); ?>
+                                </span>
+                            </div>
+
+                            <form method="post" class="lccc-task-complete-form">
+                                <?php wp_nonce_field('lccc_operational_tasks_action', 'lccc_operational_tasks_nonce'); ?>
+
+                                <input type="hidden" name="lccc_task_action" value="complete_task">
+                                <input type="hidden" name="lccc_task_id" value="<?php echo esc_attr($task['id']); ?>">
+
+                                <button type="submit" class="lccc-task-done">Done</button>
+                            </form>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php else : ?>
+                <p class="lccc-tool-meta">No active operational tasks.</p>
+            <?php endif; ?>
         </article>
 
         <article class="lccc-tool-card lccc-tool-card--trends">
