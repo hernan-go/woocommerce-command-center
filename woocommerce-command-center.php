@@ -347,18 +347,196 @@ $whatsapp_phone = lccc_format_phone_for_whatsapp($phone);
 }
 
 /**
+ * Get configured iCal calendar feeds.
+ *
+ * Private calendar URLs are loaded from config/calendar-feeds.php,
+ * which is ignored by Git.
+ */
+function lccc_get_calendar_feeds() {
+    $config_file = LCCC_PLUGIN_DIR . 'config/calendar-feeds.php';
+
+    if (!file_exists($config_file)) {
+        return array();
+    }
+
+    $feeds = require $config_file;
+
+    if (!is_array($feeds)) {
+        return array();
+    }
+
+    return array_values(array_filter($feeds, function ($feed) {
+        return (
+            is_array($feed)
+            && !empty($feed['name'])
+            && !empty($feed['url'])
+        );
+    }));
+}
+
+/**
+ * Parse an iCal date value into a Unix timestamp.
+ */
+function lccc_parse_ical_datetime($value) {
+    if (empty($value)) {
+        return 0;
+    }
+
+    $value = trim($value);
+
+    if (preg_match('/^\d{8}$/', $value)) {
+        $datetime = DateTime::createFromFormat('Ymd', $value, wp_timezone());
+    } else {
+        $datetime = DateTime::createFromFormat('Ymd\THis\Z', $value, new DateTimeZone('UTC'));
+
+        if (!$datetime) {
+            $datetime = DateTime::createFromFormat('Ymd\THis', $value, wp_timezone());
+        }
+    }
+
+    if (!$datetime) {
+        return 0;
+    }
+
+    $datetime->setTimezone(wp_timezone());
+
+    return $datetime->getTimestamp();
+}
+
+/**
+ * Decode basic iCal escaped text.
+ */
+function lccc_decode_ical_text($value) {
+    $value = str_replace(array('\n', '\N'), ' ', $value);
+    $value = str_replace(array('\,', '\;'), array(',', ';'), $value);
+
+    return trim(wp_strip_all_tags($value));
+}
+
+/**
+ * Read events from a single iCal feed URL.
+ */
+function lccc_get_events_from_ical_feed($feed_name, $feed_url) {
+    if (empty($feed_url)) {
+        return array();
+    }
+
+    $response = wp_safe_remote_get($feed_url, array(
+        'timeout' => 8,
+        'redirection' => 3,
+    ));
+
+    if (is_wp_error($response)) {
+        return array();
+    }
+
+    $status_code = wp_remote_retrieve_response_code($response);
+
+    if ($status_code < 200 || $status_code >= 400) {
+        return array();
+    }
+
+    $body = wp_remote_retrieve_body($response);
+
+    if (empty($body)) {
+        return array();
+    }
+
+    $body = preg_replace("/\r\n[ \t]/", '', $body);
+    $body = preg_replace("/\n[ \t]/", '', $body);
+
+    preg_match_all('/BEGIN:VEVENT(.*?)END:VEVENT/s', $body, $matches);
+
+    if (empty($matches[1])) {
+        return array();
+    }
+
+    $events = array();
+
+    foreach ($matches[1] as $raw_event) {
+        $summary = '';
+        $start_timestamp = 0;
+
+        if (preg_match('/SUMMARY(?:;[^:]*)?:(.+)/', $raw_event, $summary_match)) {
+            $summary = lccc_decode_ical_text($summary_match[1]);
+        }
+
+        if (preg_match('/DTSTART(?:;[^:]*)?:(.+)/', $raw_event, $start_match)) {
+            $start_timestamp = lccc_parse_ical_datetime($start_match[1]);
+        }
+
+        if (empty($summary) || empty($start_timestamp)) {
+            continue;
+        }
+
+        if ($start_timestamp < current_time('timestamp')) {
+            continue;
+        }
+
+        $events[] = array(
+            'title' => $summary,
+            'calendar' => $feed_name,
+            'timestamp' => $start_timestamp,
+            'date' => wp_date('d/m/Y', $start_timestamp),
+            'time' => wp_date('H:i', $start_timestamp),
+        );
+    }
+
+    return $events;
+}
+
+/**
  * Get Calendar widget data.
  *
- * This first version keeps the widget safe and lightweight:
- * no OAuth, no external requests, and no sensitive data.
- * Future versions can replace this data source with Google Calendar API.
+ * Reads private iCal feeds and returns the next upcoming events.
  */
 function lccc_get_calendar_widget_data() {
+    $calendar_feeds = lccc_get_calendar_feeds();
+
+    if (empty($calendar_feeds)) {
+        return array(
+            'title' => 'No calendar connected yet.',
+            'datetime' => '',
+            'meta' => 'Add private iCal URLs to config/calendar-feeds.php.',
+            'url' => 'https://calendar.google.com/',
+            'events' => array(),
+        );
+    }
+
+    $events = array();
+
+    foreach ($calendar_feeds as $feed) {
+        $feed_events = lccc_get_events_from_ical_feed($feed['name'], $feed['url']);
+
+        if (!empty($feed_events)) {
+            $events = array_merge($events, $feed_events);
+        }
+    }
+
+    usort($events, function ($a, $b) {
+        return $a['timestamp'] <=> $b['timestamp'];
+    });
+
+    $events = array_slice($events, 0, 5);
+
+    if (empty($events)) {
+        return array(
+            'title' => 'No upcoming event found.',
+            'datetime' => '',
+            'meta' => count($calendar_feeds) . ' calendar feed(s) connected.',
+            'url' => 'https://calendar.google.com/',
+            'events' => array(),
+        );
+    }
+
+    $next_event = $events[0];
+
     return array(
-        'title' => 'No event connected yet.',
-        'datetime' => '',
-        'meta' => 'Google Calendar integration pending.',
+        'title' => $next_event['title'],
+        'datetime' => $next_event['date'] . ' · ' . $next_event['time'],
+        'meta' => $next_event['calendar'],
         'url' => 'https://calendar.google.com/',
+        'events' => $events,
     );
 }
 

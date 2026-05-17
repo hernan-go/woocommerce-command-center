@@ -443,6 +443,66 @@
   }
 }
 
+.lccc-calendar-list {
+  display: grid;
+  gap: 8px;
+}
+
+.lccc-calendar-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: start;
+  padding: 9px 10px;
+  border: 1px solid rgba(149, 251, 253, 0.12);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.lccc-calendar-time {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 26px;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: rgba(149, 251, 253, 0.12);
+  color: #95fbfd;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.lccc-calendar-content {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.lccc-calendar-title {
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.lccc-calendar-meta {
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+@media (max-width: 782px) {
+  .lccc-calendar-item {
+    grid-template-columns: 1fr;
+  }
+
+  .lccc-calendar-time {
+    justify-self: start;
+  }
+}
+
 .lccc-signal-list {
   display: grid;
   gap: 8px;

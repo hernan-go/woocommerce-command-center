@@ -61,7 +61,7 @@ if (!defined('ABSPATH')) {
     </div>
 
     <div class="lccc-operations-grid">
-        <article class="lccc-tool-card lccc-tool-card--calendar">
+       <article class="lccc-tool-card lccc-tool-card--calendar">
             <div class="lccc-tool-card-header">
                 <h3 class="lccc-tool-title">Calendar</h3>
                 <a
@@ -74,13 +74,35 @@ if (!defined('ABSPATH')) {
                 </a>
             </div>
 
-            <p class="lccc-tool-label">Next Event</p>
-            <p class="lccc-tool-value">
-                <?php echo esc_html($calendar_widget['title']); ?>
-            </p>
-            <p class="lccc-tool-meta">
-                <?php echo esc_html($calendar_widget['meta']); ?>
-            </p>
+            <p class="lccc-tool-label">Next Events</p>
+
+            <?php if (!empty($calendar_widget['events'])) : ?>
+                <div class="lccc-calendar-list">
+                    <?php foreach ($calendar_widget['events'] as $event) : ?>
+                        <div class="lccc-calendar-item">
+                            <div class="lccc-calendar-time">
+                                <?php echo esc_html($event['time']); ?>
+                            </div>
+
+                            <div class="lccc-calendar-content">
+                                <span class="lccc-calendar-title">
+                                    <?php echo esc_html($event['title']); ?>
+                                </span>
+                                <span class="lccc-calendar-meta">
+                                    <?php echo esc_html($event['date']); ?> · <?php echo esc_html($event['calendar']); ?>
+                                </span>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php else : ?>
+                <p class="lccc-tool-value">
+                    <?php echo esc_html($calendar_widget['title']); ?>
+                </p>
+                <p class="lccc-tool-meta">
+                    <?php echo esc_html($calendar_widget['meta']); ?>
+                </p>
+            <?php endif; ?>
         </article>
 
         <article class="lccc-tool-card lccc-tool-card--gmail">
