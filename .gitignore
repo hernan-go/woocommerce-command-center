@@ -27,3 +27,4 @@ wp-config.php
 *.sql
 *.zip
 *.tar.gz
+config/calendar-feeds.php
