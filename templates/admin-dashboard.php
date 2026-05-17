@@ -163,20 +163,6 @@ if (!defined('ABSPATH')) {
                                   target="_blank"
                                   rel="noopener noreferrer"
                               >
-                                  <?php if (!empty($news_item['image_url'])) : ?>
-                                      <img
-                                          class="lccc-news-image"
-                                          src="<?php echo esc_url($news_item['image_url']); ?>"
-                                          alt=""
-                                          loading="lazy"
-                                          decoding="async"
-                                      >
-                                  <?php else : ?>
-                                      <span class="lccc-news-image-placeholder" aria-hidden="true">
-                                          News
-                                      </span>
-                                  <?php endif; ?>
-
                                   <span class="lccc-news-title">
                                       <?php echo esc_html($news_item['title']); ?>
                                   </span>

@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (slides.length > 1) {
-      window.setInterval(goToNext, 5000);
+      window.setInterval(goToNext, 10000);
     }
 
     showSlide(0);
