@@ -15,4 +15,5 @@ return array(
     'client_secret' => '',
     'redirect_uri' => '',
     'refresh_token' => '',
+    'account_email' => '',
 );

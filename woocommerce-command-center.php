@@ -560,11 +560,12 @@ function lccc_get_gmail_api_config() {
     }
 
     return array(
-        'client_id' => isset($config['client_id']) ? trim($config['client_id']) : '',
-        'client_secret' => isset($config['client_secret']) ? trim($config['client_secret']) : '',
-        'redirect_uri' => isset($config['redirect_uri']) ? trim($config['redirect_uri']) : '',
-        'refresh_token' => isset($config['refresh_token']) ? trim($config['refresh_token']) : '',
-    );
+    'client_id' => isset($config['client_id']) ? trim($config['client_id']) : '',
+    'client_secret' => isset($config['client_secret']) ? trim($config['client_secret']) : '',
+    'redirect_uri' => isset($config['redirect_uri']) ? trim($config['redirect_uri']) : '',
+    'refresh_token' => isset($config['refresh_token']) ? trim($config['refresh_token']) : '',
+    'account_email' => isset($config['account_email']) ? trim($config['account_email']) : '',
+  );
 }
 
 /**
@@ -575,6 +576,17 @@ function lccc_get_gmail_api_config() {
  */
 function lccc_get_gmail_signals_widget_data() {
     $gmail_config = lccc_get_gmail_api_config();
+    $gmail_url = 'https://mail.google.com/mail/';
+
+    if (!empty($gmail_config['account_email'])) {
+      $gmail_url = add_query_arg(
+          array(
+              'Email' => $gmail_config['account_email'],
+              'continue' => 'https://mail.google.com/mail/u/0/#inbox',
+          ),
+          'https://accounts.google.com/AccountChooser'
+      );
+  }
 
     if (
         empty($gmail_config['client_id'])
@@ -587,7 +599,7 @@ function lccc_get_gmail_signals_widget_data() {
             'unread_emails' => null,
             'items' => array(),
             'meta' => 'Gmail API not connected.',
-            'url' => 'https://mail.google.com/',
+            'url' => $gmail_url,
         );
     }
 
@@ -597,7 +609,7 @@ function lccc_get_gmail_signals_widget_data() {
         'unread_emails' => null,
         'items' => array(),
         'meta' => 'Gmail API configuration detected.',
-        'url' => 'https://mail.google.com/',
+        'url' => $gmail_url,
     );
 }
 
