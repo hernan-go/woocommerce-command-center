@@ -493,12 +493,25 @@ function lccc_get_events_from_ical_feed($feed_name, $feed_url) {
 function lccc_get_calendar_widget_data() {
     $calendar_feeds = lccc_get_calendar_feeds();
 
+    $gmail_config = function_exists('lccc_get_gmail_api_config') ? lccc_get_gmail_api_config() : array();
+    $calendar_url = 'https://calendar.google.com/calendar/u/0/r';
+
+    if (!empty($gmail_config['account_email'])) {
+        $calendar_url = add_query_arg(
+            array(
+                'Email' => $gmail_config['account_email'],
+                'continue' => 'https://calendar.google.com/calendar/u/0/r',
+            ),
+            'https://accounts.google.com/AccountChooser'
+        );
+    }
+
     if (empty($calendar_feeds)) {
         return array(
             'title' => 'No calendar connected yet.',
             'datetime' => '',
             'meta' => 'Add private iCal URLs to config/calendar-feeds.php.',
-            'url' => 'https://calendar.google.com/',
+            'url' => $calendar_url,
             'events' => array(),
         );
     }
@@ -524,7 +537,7 @@ function lccc_get_calendar_widget_data() {
             'title' => 'No upcoming event found.',
             'datetime' => '',
             'meta' => count($calendar_feeds) . ' calendar feed(s) connected.',
-            'url' => 'https://calendar.google.com/',
+            'url' => $calendar_url,
             'events' => array(),
         );
     }
@@ -535,7 +548,7 @@ function lccc_get_calendar_widget_data() {
         'title' => $next_event['title'],
         'datetime' => $next_event['date'] . ' · ' . $next_event['time'],
         'meta' => $next_event['calendar'],
-        'url' => 'https://calendar.google.com/',
+        'url' => $calendar_url,
         'events' => $events,
     );
 }
