@@ -541,17 +541,62 @@ function lccc_get_calendar_widget_data() {
 }
 
 /**
+ * Get configured Gmail API credentials.
+ *
+ * Private Gmail credentials are loaded from config/gmail-api.php,
+ * which is ignored by Git.
+ */
+function lccc_get_gmail_api_config() {
+    $config_file = LCCC_PLUGIN_DIR . 'config/gmail-api.php';
+
+    if (!file_exists($config_file)) {
+        return array();
+    }
+
+    $config = require $config_file;
+
+    if (!is_array($config)) {
+        return array();
+    }
+
+    return array(
+        'client_id' => isset($config['client_id']) ? trim($config['client_id']) : '',
+        'client_secret' => isset($config['client_secret']) ? trim($config['client_secret']) : '',
+        'redirect_uri' => isset($config['redirect_uri']) ? trim($config['redirect_uri']) : '',
+        'refresh_token' => isset($config['refresh_token']) ? trim($config['refresh_token']) : '',
+    );
+}
+
+/**
  * Get Gmail Signals widget data.
  *
- * This first version keeps the widget safe and non-invasive:
- * no OAuth, no external requests, and no email content access.
- * Future versions can replace this placeholder with Gmail API signals.
+ * First API-ready version. It checks private configuration
+ * before attempting Gmail API access.
  */
 function lccc_get_gmail_signals_widget_data() {
+    $gmail_config = lccc_get_gmail_api_config();
+
+    if (
+        empty($gmail_config['client_id'])
+        || empty($gmail_config['client_secret'])
+        || empty($gmail_config['refresh_token'])
+    ) {
+        return array(
+            'unread_inbox' => null,
+            'unread_notifications' => null,
+            'unread_emails' => null,
+            'items' => array(),
+            'meta' => 'Gmail API not connected.',
+            'url' => 'https://mail.google.com/',
+        );
+    }
+
     return array(
+        'unread_inbox' => null,
+        'unread_notifications' => null,
         'unread_emails' => null,
-        'pending_replies' => null,
-        'updates' => null,
+        'items' => array(),
+        'meta' => 'Gmail API configuration detected.',
         'url' => 'https://mail.google.com/',
     );
 }

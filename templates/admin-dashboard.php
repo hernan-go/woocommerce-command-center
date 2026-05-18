@@ -119,25 +119,40 @@ if (!defined('ABSPATH')) {
                     </div>
 
                     <ul class="lccc-signal-list">
-                      <li>
-                          Unread emails:
-                          <strong>
-                              <?php echo is_null($gmail_signals_widget['unread_emails']) ? '—' : esc_html($gmail_signals_widget['unread_emails']); ?>
-                          </strong>
-                      </li>
-                      <li>
-                          Pending replies:
-                          <strong>
-                              <?php echo is_null($gmail_signals_widget['pending_replies']) ? '—' : esc_html($gmail_signals_widget['pending_replies']); ?>
-                          </strong>
-                      </li>
-                      <li>
-                          Updates:
-                          <strong>
-                              <?php echo is_null($gmail_signals_widget['updates']) ? '—' : esc_html($gmail_signals_widget['updates']); ?>
-                          </strong>
-                      </li>
-                  </ul>
+                        <li>
+                            Unread Inbox:
+                            <strong>
+                                <?php echo is_null($gmail_signals_widget['unread_inbox']) ? '—' : esc_html($gmail_signals_widget['unread_inbox']); ?>
+                            </strong>
+                        </li>
+                        <li>
+                            Unread Notifications:
+                            <strong>
+                                <?php echo is_null($gmail_signals_widget['unread_notifications']) ? '—' : esc_html($gmail_signals_widget['unread_notifications']); ?>
+                            </strong>
+                        </li>
+                    </ul>
+
+                    <?php if (!empty($gmail_signals_widget['items'])) : ?>
+                        <ul class="lccc-gmail-list">
+                            <?php foreach ($gmail_signals_widget['items'] as $gmail_item) : ?>
+                                <li>
+                                    <span class="lccc-gmail-sender">
+                                        <?php echo esc_html($gmail_item['sender']); ?>
+                                    </span>
+                                    <?php if (!empty($gmail_item['subject'])) : ?>
+                                        <span class="lccc-gmail-subject">
+                                            <?php echo esc_html($gmail_item['subject']); ?>
+                                        </span>
+                                    <?php endif; ?>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php else : ?>
+                        <p class="lccc-tool-meta">
+                            <?php echo esc_html($gmail_signals_widget['meta']); ?>
+                        </p>
+                    <?php endif; ?>
                 </article>
 
                 <article class="lccc-tool-card lccc-tool-card--tasks">

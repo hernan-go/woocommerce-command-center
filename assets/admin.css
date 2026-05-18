@@ -526,6 +526,36 @@
   font-size: 14px;
 }
 
+.lccc-gmail-list {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lccc-gmail-list li {
+  display: grid;
+  gap: 3px;
+  padding: 8px 10px;
+  border: 1px solid rgba(149, 251, 253, 0.12);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.lccc-gmail-sender {
+  color: #95fbfd;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.lccc-gmail-subject {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
 .lccc-task-preview {
   display: grid;
   grid-template-columns: 1fr auto auto;
