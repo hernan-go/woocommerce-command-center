@@ -569,24 +569,218 @@ function lccc_get_gmail_api_config() {
 }
 
 /**
+ * Request a temporary Gmail API access token using the stored refresh token.
+ */
+function lccc_get_gmail_access_token($gmail_config) {
+    if (
+        empty($gmail_config['client_id'])
+        || empty($gmail_config['client_secret'])
+        || empty($gmail_config['refresh_token'])
+    ) {
+        return '';
+    }
+
+    $response = wp_remote_post('https://oauth2.googleapis.com/token', array(
+        'timeout' => 10,
+        'body' => array(
+            'client_id' => $gmail_config['client_id'],
+            'client_secret' => $gmail_config['client_secret'],
+            'refresh_token' => $gmail_config['refresh_token'],
+            'grant_type' => 'refresh_token',
+        ),
+    ));
+
+    if (is_wp_error($response)) {
+        return '';
+    }
+
+    $status_code = wp_remote_retrieve_response_code($response);
+
+    if ($status_code < 200 || $status_code >= 300) {
+        return '';
+    }
+
+    $body = json_decode(wp_remote_retrieve_body($response), true);
+
+    if (empty($body['access_token'])) {
+        return '';
+    }
+
+    return sanitize_text_field($body['access_token']);
+}
+
+/**
+ * Perform a Gmail API GET request.
+ */
+function lccc_gmail_api_get($access_token, $endpoint, $query_args = array()) {
+    if (empty($access_token) || empty($endpoint)) {
+        return array();
+    }
+
+    $url = add_query_arg(
+        $query_args,
+        'https://gmail.googleapis.com/gmail/v1/users/me/' . ltrim($endpoint, '/')
+    );
+
+    $response = wp_remote_get($url, array(
+        'timeout' => 10,
+        'headers' => array(
+            'Authorization' => 'Bearer ' . $access_token,
+        ),
+    ));
+
+    if (is_wp_error($response)) {
+        return array();
+    }
+
+    $status_code = wp_remote_retrieve_response_code($response);
+
+    if ($status_code < 200 || $status_code >= 300) {
+        return array();
+    }
+
+    $body = json_decode(wp_remote_retrieve_body($response), true);
+
+    return is_array($body) ? $body : array();
+}
+
+/**
+ * Count unread Gmail messages matching a Gmail search query.
+ *
+ * Counts real returned messages instead of relying on resultSizeEstimate,
+ * because Gmail estimates can be inaccurate for dashboard counters.
+ */
+function lccc_get_gmail_unread_count_by_query($access_token, $query, $limit = 500) {
+    $count = 0;
+    $page_token = '';
+
+    do {
+        $query_args = array(
+            'q' => $query,
+            'maxResults' => 100,
+        );
+
+        if (!empty($page_token)) {
+            $query_args['pageToken'] = $page_token;
+        }
+
+        $response = lccc_gmail_api_get($access_token, 'messages', $query_args);
+
+        if (!empty($response['messages']) && is_array($response['messages'])) {
+            $count += count($response['messages']);
+        }
+
+        $page_token = isset($response['nextPageToken']) ? $response['nextPageToken'] : '';
+
+        if ($count >= $limit) {
+            return $limit;
+        }
+    } while (!empty($page_token));
+
+    return $count;
+}
+
+/**
+ * Get latest unread Gmail messages matching one or more Gmail search queries.
+ */
+function lccc_get_latest_gmail_unread_items($access_token, $queries, $limit = 5) {
+    $items = array();
+
+    foreach ($queries as $query) {
+        $response = lccc_gmail_api_get($access_token, 'messages', array(
+            'q' => $query,
+            'maxResults' => $limit,
+        ));
+
+        if (empty($response['messages']) || !is_array($response['messages'])) {
+            continue;
+        }
+
+        foreach ($response['messages'] as $message) {
+            if (empty($message['id'])) {
+                continue;
+            }
+
+            $message_detail = lccc_gmail_api_get($access_token, 'messages/' . $message['id'], array(
+                'format' => 'metadata',
+                'metadataHeaders' => array('From', 'Subject'),
+            ));
+
+            if (empty($message_detail['payload']['headers'])) {
+                continue;
+            }
+
+            $sender = '';
+            $subject = '';
+
+            foreach ($message_detail['payload']['headers'] as $header) {
+                if (empty($header['name']) || !isset($header['value'])) {
+                    continue;
+                }
+
+                if ('from' === strtolower($header['name'])) {
+                    $sender = $header['value'];
+                }
+
+                if ('subject' === strtolower($header['name'])) {
+                    $subject = $header['value'];
+                }
+            }
+
+            if (empty($sender)) {
+                $sender = 'Unknown sender';
+            }
+
+            $items[$message['id']] = array(
+                'sender' => lccc_format_gmail_sender($sender),
+                'subject' => wp_strip_all_tags($subject),
+                'internal_date' => isset($message_detail['internalDate']) ? (int) $message_detail['internalDate'] : 0,
+            );
+        }
+    }
+
+    usort($items, function ($a, $b) {
+        return $b['internal_date'] <=> $a['internal_date'];
+    });
+
+    return array_slice(array_values($items), 0, $limit);
+}
+
+/**
+ * Format Gmail sender for compact dashboard display.
+ */
+function lccc_format_gmail_sender($sender) {
+    $sender = wp_strip_all_tags($sender);
+
+    if (preg_match('/^"?([^"<]+)"?\s*</', $sender, $matches)) {
+        return trim($matches[1]);
+    }
+
+    if (false !== strpos($sender, '@')) {
+        return trim(substr($sender, 0, strpos($sender, '@')));
+    }
+
+    return trim($sender);
+}
+
+/**
  * Get Gmail Signals widget data.
  *
- * First API-ready version. It checks private configuration
- * before attempting Gmail API access.
+ * Reads unread Gmail signals using Gmail API with readonly access.
  */
 function lccc_get_gmail_signals_widget_data() {
     $gmail_config = lccc_get_gmail_api_config();
     $gmail_url = 'https://mail.google.com/mail/';
 
     if (!empty($gmail_config['account_email'])) {
-      $gmail_url = add_query_arg(
-          array(
-              'Email' => $gmail_config['account_email'],
-              'continue' => 'https://mail.google.com/mail/u/0/#inbox',
-          ),
-          'https://accounts.google.com/AccountChooser'
-      );
-  }
+        $gmail_url = add_query_arg(
+            array(
+                'Email' => $gmail_config['account_email'],
+                'continue' => 'https://mail.google.com/mail/u/0/#inbox',
+            ),
+            'https://accounts.google.com/AccountChooser'
+        );
+    }
 
     if (
         empty($gmail_config['client_id'])
@@ -603,12 +797,37 @@ function lccc_get_gmail_signals_widget_data() {
         );
     }
 
+    $access_token = lccc_get_gmail_access_token($gmail_config);
+
+    if (empty($access_token)) {
+        return array(
+            'unread_inbox' => null,
+            'unread_notifications' => null,
+            'unread_emails' => null,
+            'items' => array(),
+            'meta' => 'Could not connect to Gmail API.',
+            'url' => $gmail_url,
+        );
+    }
+
+    $inbox_query = 'in:inbox category:primary is:unread';
+    $notifications_query = 'in:inbox category:updates is:unread';
+
+    $unread_inbox = lccc_get_gmail_unread_count_by_query($access_token, $inbox_query);
+    $unread_notifications = lccc_get_gmail_unread_count_by_query($access_token, $notifications_query);
+
+    $items = lccc_get_latest_gmail_unread_items(
+        $access_token,
+        array($inbox_query, $notifications_query),
+        5
+    );
+
     return array(
-        'unread_inbox' => null,
-        'unread_notifications' => null,
-        'unread_emails' => null,
-        'items' => array(),
-        'meta' => 'Gmail API configuration detected.',
+        'unread_inbox' => $unread_inbox,
+        'unread_notifications' => $unread_notifications,
+        'unread_emails' => $unread_inbox + $unread_notifications,
+        'items' => $items,
+        'meta' => empty($items) ? 'No unread Gmail signals found.' : 'Latest unread Gmail signals.',
         'url' => $gmail_url,
     );
 }
