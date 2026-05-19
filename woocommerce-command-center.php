@@ -1,9 +1,10 @@
 <?php
 /**
- * Plugin Name: WooCommerce Command Center
- * Description: Custom admin dashboard for managing WooCommerce orders, revenue and customer follow-up workflows.
+ * Plugin Name: Operations Hub
+ * Description: Custom dashboard for operational data, signals and tools.
  * Version: 0.1.0
- * Author: Hernán Luis Gobulin
+ * Author: hernan-go
+ * Author URI: https://github.com/hernan-go
  */
 
 if (!defined('ABSPATH')) {
@@ -15,7 +16,7 @@ define('LCCC_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('LCCC_PLUGIN_URL', plugin_dir_url(__FILE__));
 
 /**
- * Register admin assets only for the WooCommerce Command Center page.
+ * Register admin assets only for the Operations Hub page.
  */
 add_action('admin_enqueue_scripts', 'lccc_enqueue_admin_assets');
 
@@ -55,12 +56,12 @@ add_action('admin_init', 'lccc_handle_operational_task_actions');
 
 function lccc_register_admin_page() {
     add_menu_page(
-    'WooCommerce Command Center',
-    'WooCommerce Center',
+    'Operations Hub',
+    'Operations Hub',
     'manage_options',
     'woocommerce-command-center',
     'lccc_render_admin_page',
-    'dashicons-cart',
+    'dashicons-screenoptions',
     56
 );
 }

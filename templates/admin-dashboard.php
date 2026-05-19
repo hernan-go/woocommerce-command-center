@@ -6,9 +6,9 @@ if (!defined('ABSPATH')) {
 
 <div class="lccc-dashboard">
     <header class="lccc-header">
-        <h1 class="lccc-title">WooCommerce Command Center</h1>
+        <h1 class="lccc-title">Operations Hub</h1>
         <p class="lccc-subtitle">
-            Custom operational dashboard for WooCommerce orders, revenue and customer follow-up.
+          Custom dashboard for operational data, signals and tools.
         </p>
     </header>
 

@@ -1,14 +1,14 @@
-# WooCommerce Command Center
+# Operations Hub
 
-Custom WordPress/WooCommerce admin dashboard for centralizing order tracking, monthly revenue, customer follow-up actions and operational activity.
+Custom WordPress plugin dashboard for operational data, signals and internal tools.
 
 ## Preview
 
-![WooCommerce Command Center dashboard preview](assets/screenshot/dashboard-preview.png)
+![Operations Hub dashboard preview](assets/screenshot/dashboard-preview.png)
 
 ## Overview
 
-WooCommerce Command Center is a custom WordPress plugin that extends WooCommerce with a focused internal dashboard for store operations, order tracking, revenue visibility and customer follow-up.
+Operations Hub is a custom WordPress plugin that centralizes operational data, workflow signals and internal management tools inside the WordPress admin.
 
 Instead of checking orders, customers, products and follow-up actions across different WooCommerce screens, the plugin centralizes the most relevant operational data in one admin view.
 
